@@ -17,6 +17,7 @@ import argparse
 from datetime import datetime
 from helpers import SplitNameValuePairAtSeparator
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
+import os
 
 ZIP_EPOCH = 315532800
 
@@ -66,6 +67,7 @@ def main(args):
 
       entry_info = ZipInfo(filename=dst_path, date_time=ts)
 
+      entry_info.external_attr = (os.stat(src_path).st_mode & 0o777) << 16 # give full access to included file
       entry_info.compress_type = ZIP_DEFLATED
 
       # the zipfile library doesn't support adding a file by path with write()
